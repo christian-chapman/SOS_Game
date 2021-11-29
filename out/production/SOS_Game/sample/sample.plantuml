@@ -1,0 +1,225 @@
+@startuml
+
+title __SAMPLE's Class Diagram__\n
+
+  namespace sample {
+    class sample.Board {
+        + isBlueTurn : boolean
+        - board : ArrayList<ArrayList<Tile>>
+        + addTile()
+        + changeTurn()
+        + clearBoard()
+        + getSize()
+        + getTile()
+        + initBoard()
+        + initTiles()
+        + setBluePlayer()
+        + setRedPlayer()
+        + startAI()
+        ~ Board()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.ComputerPlayer {
+        + findFirstSO_Completion()
+        + findFirstSS_Completion()
+        + makeMove()
+        ~ ComputerPlayer()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.ComputerPlayerTest {
+        - jfxPanel : JFXPanel
+        ~ findFirstSO_CompletionTest()
+        ~ makeMoveTest1()
+        ~ makeMoveTest2()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.Controller {
+    }
+  }
+  
+
+  namespace sample {
+    class sample.GUI {
+        + bluePlayerIsAI : Boolean
+        + redPlayerIsAI : Boolean
+        - allStrikethroughLines : ArrayList<Line>
+        - blueButtonO : RadioButton
+        - blueButtonS : RadioButton
+        - blueComputerPlayerButton : RadioButton
+        - blueHumanPlayerButton : RadioButton
+        - bluePlayerLabel : Label
+        - bluePlayerOptionsGroup : ToggleGroup
+        - bluePlayerOptionsLabel : Label
+        - blueTurn : Label
+        - blue_SO_group : ToggleGroup
+        - boardSize : int
+        - gameModeGroup : ToggleGroup
+        - gameName : Label
+        - gameScene : Scene
+        - generalGameButton : RadioButton
+        - generalGameModeLabel : Label
+        - initScene : Scene
+        - newGame : Button
+        - primaryStage : Stage
+        - redButtonO : RadioButton
+        - redButtonS : RadioButton
+        - redComputerPlayerButton : RadioButton
+        - redHumanPlayerButton : RadioButton
+        - redPlayerLabel : Label
+        - redPlayerOptionsGroup : ToggleGroup
+        - redPlayerOptionsLabel : Label
+        - redTurn : Label
+        - red_SO_group : ToggleGroup
+        - root : Pane
+        - simpleGameButton : RadioButton
+        - simpleGameModeLabel : Label
+        - winnerLabel : Label
+        + addStrikethroughToPieces()
+        + changeTurn()
+        + createBluePlayerPanel()
+        + createBoard()
+        + createGameModeLabel()
+        + createNewGameButton()
+        + createRedPlayerPanel()
+        + displayPlayerTurn()
+        + drawWinnerLabel()
+        + initializeBoardPane()
+        + setBoard()
+        + setGameScene()
+        + setInitScene()
+        + setPrimaryStage()
+        ~ GUI()
+        - initPlayerTurnLabels()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.GeneralGame {
+        + existingSOS : ArrayList<ArrayList<ArrayList<Integer>>>
+        + findSOS()
+        + getWinner()
+        + isEndOfGame()
+        ~ GeneralGame()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.GeneralGameTest {
+        - jfxPanel : JFXPanel
+        ~ getWinnerTest()
+        ~ isEndOfGameTest()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.Main {
+        - gameScene : Scene
+        - initRoot : Pane
+        - initScene : Scene
+        - root : Pane
+        {static} + main()
+        + start()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.Player {
+        + numOfSOS : int
+        + selectedPiece : String
+        + makeMove()
+        + resetToDefault()
+        ~ Player()
+        ~ Player()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.SimpleGame {
+        + gameIsDraw : Boolean
+        + gameIsOver : Boolean
+        + isCurrentGameMode : Boolean
+        + winningLocations : ArrayList<ArrayList<Integer>>
+        + AI_Move()
+        + findSOS()
+        + getWinner()
+        + getWinningLocations()
+        + isEndOfGame()
+        ~ SimpleGame()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.SimpleGameTest {
+        ~ isEndOfGameTest()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.Tile {
+        - box : Rectangle
+        - text : Text
+        + Tile()
+        + clearGamePiece()
+        + drawO()
+        + drawS()
+        + getCenterX()
+        + getCenterY()
+        + getGamePiece()
+        + tileAction()
+    }
+  }
+  
+
+  namespace sample {
+    class sample.TileTest {
+        ~ TileActionTest1()
+        ~ TileActionTest2()
+        ~ drawO()
+        ~ drawS()
+        ~ getGamePiece()
+    }
+  }
+  
+
+  sample.Board o-- sample.Player : bluePlayer
+  sample.Board o-- sample.GUI : gui
+  sample.Board o-- sample.Player : redPlayer
+  sample.ComputerPlayer -up-|> sample.Player
+  sample.GUI o-- sample.GeneralGame : generalGame
+  sample.GUI o-- sample.SimpleGame : simpleGame
+  sample.GUI o-- sample.Board : board
+  sample.GeneralGame -up-|> sample.SimpleGame
+  sample.Main -up-|> javafx.application.Application
+  sample.Main o-- sample.Player : bluePlayer
+  sample.Main o-- sample.Board : board
+  sample.Main o-- sample.GUI : gui
+  sample.Main o-- sample.Player : redPlayer
+  sample.SimpleGame o-- sample.Board : board
+  sample.Tile -up-|> javafx.scene.layout.StackPane
+  sample.Tile o-- sample.Board : board
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

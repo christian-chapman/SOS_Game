@@ -1,0 +1,198 @@
+@startuml
+
+title __SOS_GAME's Class Diagram__\n
+
+skinparam classAttributeIconSize 0
+
+  namespace SOS_Game {
+    class SOS_Game.Board {
+    -board: ArrayList<ArrayList<Tile>>
+    +gui: GUI
+    +bluePlayer: Player
+    +redPlayer: Player
+    +isBlueTurn: boolean
+
+    +Board(Player, Player)
+    +setBluePlayer(Player): void
+    +setRedPlayer(Player): void
+    +initBoard(int): void
+    +initTiles(int): void
+    +changeTurn(): void
+    +startAI(): void
+    +addTile(int, int): void
+    +getTile(int, int): Tile
+    +getSize(): int
+    +clearBoard(): void
+    }
+  }
+  
+
+  namespace SOS_Game {
+    class SOS_Game.ComputerPlayer {
+    +ComputerPlayer()
+    +findFirstSO_Completion(Board)
+    +findFirstSS_Completion(Board)
+    }
+  }
+  
+
+
+  namespace SOS_Game {
+    class SOS_Game.GUI {
+    -root: Pane
+    -board: Board
+    -primaryStage: Stage
+    -gameScene: Scene
+    -initScene: Scene
+    +simpleGame: SimpleGame
+    +generalGame: GeneralGame
+    -boardSize: int
+    -allStrikethroughLines: ArrayList<Line>
+    -blueTurn: Label
+    -redTurn: Label
+    -bluePlayerLabel: Label
+    -blue_SO_group: ToggleGroup
+    -blueButtonS: RadioButton
+    -blueButtonO: RadioButton
+    -redPlayerLabel: Label
+    -red_SO_group: ToggleGroup
+    -redButtonS: RadioButton
+    -redButtonO: RadioButton
+    -gameName: Label
+    -gameModeGroup: ToggleGroup
+    -simpleGameButton: RadioButton
+    -generalGameButton: RadioButton
+    -generalGameModeLabel: Label
+    -simpleGameModeLabel: Label
+    -newGame: Button
+    -winnerLabel: Label
+    -bluePlayerOptionsLabel: Label
+    -redPlayerOptionsLabel: Label
+    -bluePlayerOptionsGroup: ToggleGroup
+    -redPlayerOptionsGroup: ToggleGroup
+    -blueComputerPlayerButton: RadioButton
+    -blueHumanPlayerButton: RadioButton
+    -redComputerPlayerButton: RadioButton
+    -redHumanPlayerButton: RadioButton
+    +bluePlayerIsAI: Boolean
+    +redPlayerIsAI: Boolean
+
+    GUI(Pane)
+    +setBoard(Board): void
+    +setPrimaryStage(Stage): void
+    +setGameScene(Scene): void
+    +setInitScene(Scene): void
+    +initializeBoardPane(Pane): void
+    +createBoard(): void
+    +createBluePlayerPanel(): void
+    +createRedPlayerPanel(): void
+    +createGameModeLabel(): void
+    +initPlayerTurnLabels(): void
+    +displayPlayerTurn(): void
+    +addStrikethroughToPieces(): void
+    +drawWinnerLabel(String): void
+    +changeTurn(): void
+    +createNewGameButton(): void
+
+    }
+  }
+  
+
+  namespace SOS_Game {
+    class SOS_Game.GeneralGame {
+    +existingSOS: ArrayList<ArrayList<ArrayList<Integer>>>
+
+    GeneralGame(Board)
+    }
+  }
+
+
+  namespace SOS_Game {
+    class SOS_Game.Main {
+    -root: Pane
+    -initRoot: Pane
+    -bluePlayer: Player
+    -redPlayer: Player
+    -gameScene: Scene
+    -initScene: Scene
+    -gui: GUI
+    -board: Board
+
+    +start(Stage): void
+    + {static} Main(String[]): void
+    }
+  }
+  
+
+  namespace SOS_Game {
+    class SOS_Game.Player {
+    +selectedPiece: String
+    +numOfSOS: int
+
+    Player(String)
+    +resetToDefault(): void
+    +makeMove(Board): void
+    }
+  }
+  
+
+  namespace SOS_Game {
+    class SOS_Game.SimpleGame {
+    +gameIsOver: Boolean
+    +gameIsDraw: Boolean
+    +board: Board
+    +winningLocations: ArrayList<ArrayList<Integer>>
+    +isCurrentGameMode: Boolean
+
+    SimpleGame(Board)
+    +findSOS(): void
+    +isEndOfGame(): Boolean
+    +getWinningLocations: ArrayList<ArrayList<Integer>>
+    +getWinner(): String
+    }
+  }
+  
+
+  
+
+  namespace SOS_Game {
+    class SOS_Game.Tile {
+    -text: Text
+    -box: Rectangle
+    -board: Board
+
+    Tile(int,int,Board)
+    +tileAction(): void
+    +drawS(): void
+    +drawO(): void
+    +getGamePiece(): String
+    +clearGamePiece(): void
+    +getCenterX(): double
+    +getCenterY(): double
+    }
+  }
+
+
+  SOS_Game.Board o-- SOS_Game.Player : bluePlayer
+  SOS_Game.Board o-- SOS_Game.GUI : gui
+  SOS_Game.Board o-- SOS_Game.Player : redPlayer
+  SOS_Game.ComputerPlayer -up-|> SOS_Game.Player
+  SOS_Game.GUI o-- SOS_Game.GeneralGame : generalGame
+  SOS_Game.GUI o-- SOS_Game.SimpleGame : simpleGame
+  SOS_Game.GUI o-- SOS_Game.Board : board
+  SOS_Game.GeneralGame -up-|> SOS_Game.SimpleGame
+  SOS_Game.Main -up-|> javafx.application.Application
+  SOS_Game.Main o-- SOS_Game.Player : bluePlayer
+  SOS_Game.Main o-- SOS_Game.Board : board
+  SOS_Game.Main o-- SOS_Game.GUI : gui
+  SOS_Game.Main o-- SOS_Game.Player : redPlayer
+  SOS_Game.SimpleGame o-- SOS_Game.Board : board
+  SOS_Game.Tile -up-|> javafx.scene.layout.StackPane
+  SOS_Game.Tile o-- SOS_Game.Board : board
+
+
+right footer
+
+endfooter
+
+@enduml

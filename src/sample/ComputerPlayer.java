@@ -28,10 +28,25 @@ public class ComputerPlayer extends Player {
             } while (!board.getTile(randomInt1, randomInt2).getGamePiece().isEmpty());
 
 
-            if (rand.nextInt(100) % 2 == 0) // choose whether to draw an S or an O
+            if (rand.nextInt(100) % 2 == 0) {// choose whether to draw an S or an O
                 board.getTile(randomInt1, randomInt2).drawS();
-            else
+
+                ArrayList<Integer> cellLocation = new ArrayList<Integer>();
+                cellLocation.add(randomInt1);
+                cellLocation.add(randomInt2);
+
+                recordMove(cellLocation, "S");
+            }
+
+            else {
                 board.getTile(randomInt1, randomInt2).drawO();
+
+                ArrayList<Integer> cellLocation = new ArrayList<Integer>();
+                cellLocation.add(randomInt1);
+                cellLocation.add(randomInt2);
+
+                recordMove(cellLocation, "O");
+            }
 
         }
 
@@ -39,12 +54,15 @@ public class ComputerPlayer extends Player {
             // SO was found, place at the spot where the next S goes
             board.getTile(SO_Finish_Location.get(0), SO_Finish_Location.get(1)).drawS();
 
+            recordMove(SO_Finish_Location, "S");
+
         }
 
         else {
             // SS was found, place at the spot where the next O goes
             board.getTile(SS_Finish_Location.get(0), SS_Finish_Location.get(1)).drawO();
 
+            recordMove(SS_Finish_Location, "O");
         }
     }
 

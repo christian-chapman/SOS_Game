@@ -40,7 +40,7 @@ public class Board {
     public void initTiles(int boardSize) {
         for (int i = 0; i < (boardSize); i++) {
             for (int j = 0; j < (boardSize); j++) {
-                addTile(new Tile(50, 50, this), i, j);
+                addTile(new Tile(50, 50, this, i, j), i, j);
             }
         }
     }

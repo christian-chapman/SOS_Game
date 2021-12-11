@@ -10,7 +10,7 @@ class TileTest {
     @org.junit.jupiter.api.Test
     void drawS() {
         Board board = new Board(new Player("S"), new Player("S"));
-        Tile tile = new Tile(50, 50, board);
+        Tile tile = new Tile(50, 50, board, 0, 0);
         tile.drawS();
         assertEquals("S", tile.getGamePiece());
     }
@@ -18,7 +18,7 @@ class TileTest {
     @org.junit.jupiter.api.Test
     void drawO() {
         Board board = new Board(new Player("S"), new Player("S"));
-        Tile tile = new Tile(50, 50, board);
+        Tile tile = new Tile(50, 50, board, 0, 0);
         tile.drawO();
         assertEquals("O", tile.getGamePiece());
     }
@@ -26,7 +26,7 @@ class TileTest {
     @org.junit.jupiter.api.Test
     void getGamePiece() {
         Board board = new Board(new Player("S"), new Player("S"));
-        Tile tile = new Tile(50, 50, board);
+        Tile tile = new Tile(50, 50, board, 0, 0);
         tile.drawS();
         assertEquals("S", tile.getGamePiece());
     }
@@ -37,7 +37,7 @@ class TileTest {
         board.initBoard(8);
         board.gui = new GUI(new Pane());
 
-        Tile tile = new Tile(50, 50, board);
+        Tile tile = new Tile(50, 50, board, 0 ,0);
         tile.tileAction();
         assertEquals("S", tile.getGamePiece());
     }
@@ -48,7 +48,7 @@ class TileTest {
         board.initBoard(8);
         board.gui = new GUI(new Pane());
 
-        Tile tile = new Tile(50, 50, board);
+        Tile tile = new Tile(50, 50, board,0 ,0);
         tile.tileAction();
         tile.tileAction(); // simulates it being clicked when it has already been clicked once
         assertEquals("S", tile.getGamePiece());

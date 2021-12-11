@@ -15,6 +15,8 @@ public class Main extends Application {
     private Pane root = new Pane();
     private Pane initRoot = new Pane();
 
+    private RecordGame recordGame = new RecordGame();
+
     private Player bluePlayer = new Player("S");
     private Player redPlayer = new Player("S");
 

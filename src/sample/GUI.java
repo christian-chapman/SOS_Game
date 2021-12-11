@@ -48,6 +48,7 @@ public class GUI {
     private Label simpleGameModeLabel;
 
     private Button newGame;
+    private Button replayGameButton;
     private Label winnerLabel;
 
     private Label bluePlayerOptionsLabel;
@@ -64,6 +65,15 @@ public class GUI {
 
     public Boolean bluePlayerIsAI;
     public Boolean redPlayerIsAI;
+
+    private CheckBox recordGameCheckbox;
+
+    private Boolean isReplaying;
+
+    private Button replayNextMoveButton;
+
+    private Boolean bluePlayerSelected;
+    private Boolean redPlayerSelected;
 
     GUI(Pane root) {
         this.root = root;
@@ -94,7 +104,7 @@ public class GUI {
         this.simpleGameModeLabel = new Label("SOS: Simple Game");
 
         this.newGame = new Button("New Game");
-
+        this.replayGameButton = new Button("Replay Game");
 
         this.bluePlayerOptionsLabel = new Label("Blue Player");
         this.redPlayerOptionsLabel = new Label("Red Player");
@@ -107,6 +117,15 @@ public class GUI {
 
         this.redComputerPlayerButton = new RadioButton("Computer");
         this.redHumanPlayerButton = new RadioButton("Human");
+
+        this.recordGameCheckbox = new CheckBox("Record Game");
+
+        this.isReplaying = false;
+
+        this.replayNextMoveButton = new Button(">> Next Move >>");
+
+        this.bluePlayerSelected = false;
+        this.redPlayerSelected = false;
 
     }
 
@@ -121,8 +140,6 @@ public class GUI {
     public void setInitScene(Scene initScene) { this.initScene = initScene; }
 
     public void initializeBoardPane(Pane initRoot) {
-
-
         Label promptBoardSizeLabel = new Label("Select a game board size and a game mode below:");
         promptBoardSizeLabel.setFont(new Font("Arial", 14));
         promptBoardSizeLabel.setTranslateX(100);
@@ -172,6 +189,10 @@ public class GUI {
             bluePlayerIsAI = true;
             board.setBluePlayer(new ComputerPlayer());
 
+            bluePlayerSelected = true;
+            if (redPlayerSelected && !initRoot.getChildren().contains(recordGameCheckbox)) {
+                initRoot.getChildren().add(recordGameCheckbox);
+            }
         });
 
         blueHumanPlayerButton.setTranslateX(110);
@@ -181,6 +202,11 @@ public class GUI {
         blueHumanPlayerButton.setOnAction( e-> {
             bluePlayerIsAI = false;
             board.setBluePlayer(new Player("S"));
+
+            bluePlayerSelected = true;
+            if (redPlayerSelected && !initRoot.getChildren().contains(recordGameCheckbox)) {
+                initRoot.getChildren().add(recordGameCheckbox);
+            }
         });
 
         redComputerPlayerButton.setTranslateX(335);
@@ -190,6 +216,11 @@ public class GUI {
         redComputerPlayerButton.setOnAction( e-> {
             redPlayerIsAI = true;
             board.setRedPlayer(new ComputerPlayer());
+
+            redPlayerSelected = true;
+            if (bluePlayerSelected && !initRoot.getChildren().contains(recordGameCheckbox)) {
+                initRoot.getChildren().add(recordGameCheckbox);
+            }
         });
 
         redHumanPlayerButton.setTranslateX(335);
@@ -199,6 +230,11 @@ public class GUI {
         redHumanPlayerButton.setOnAction( e-> {
             redPlayerIsAI = false;
             board.setRedPlayer(new Player("S"));
+
+            redPlayerSelected = true;
+            if (bluePlayerSelected && !initRoot.getChildren().contains(recordGameCheckbox)) {
+                initRoot.getChildren().add(recordGameCheckbox);
+            }
         });
 
         Slider boardSizeSlider = new Slider(3, 15, 8.9);
@@ -215,6 +251,15 @@ public class GUI {
                         boardSizeSlider.valueProperty()
                 )
         );
+
+        recordGameCheckbox.setFont(new Font("Arial", 14));
+        recordGameCheckbox.setTranslateX(205);
+        recordGameCheckbox.setTranslateY(360);
+
+        recordGameCheckbox.setOnAction(e -> {
+            board.redPlayer.isRecordingMoves = recordGameCheckbox.isSelected();
+            board.bluePlayer.isRecordingMoves = recordGameCheckbox.isSelected();
+        });
 
 
         Button startGame = new Button("Start Game");
@@ -240,6 +285,8 @@ public class GUI {
             primaryStage.setHeight(60 + (boardSize + 2) * 50);
 
             board.startAI();
+
+            initRoot.getChildren().remove(recordGameCheckbox);
         });
 
     }
@@ -249,12 +296,14 @@ public class GUI {
         int col, row = 0;
         for (int i = 1; i < (boardSize + 1); i++) {
             for (int j = 3; j < (boardSize + 3); j++) {
-                Tile tile = new Tile(50,50, board);
+                row = i - 1;
+                col = j - 3;
+
+                Tile tile = new Tile(50,50, board, row, col);
                 tile.setTranslateX(j * 50);
                 tile.setTranslateY(i * 50);
 
-                row = i - 1;
-                col = j - 3;
+
                 board.addTile(tile, row, col);
                 root.getChildren().add(tile);
             }
@@ -438,23 +487,111 @@ public class GUI {
 
     }
 
+    public void replayGame() {
+        if (recordGameCheckbox.isSelected()) {
+            ReplayGame replay = new ReplayGame(board);
+
+            blueComputerPlayerButton.setSelected(false);
+            blueHumanPlayerButton.setSelected(false);
+
+            redComputerPlayerButton.setSelected(false);
+            redHumanPlayerButton.setSelected(false);
+
+            recordGameCheckbox.setSelected(false);
+
+            bluePlayerSelected = false;
+            redPlayerSelected = false;
+
+
+            replayGameButton.setOnAction(e -> {
+                generalGame.existingSOS = new ArrayList<ArrayList<ArrayList<Integer>>>();
+
+                replay.currentIteration = 0;
+                board.isBlueTurn = true;
+
+                if (!root.getChildren().contains(replayNextMoveButton))
+                    root.getChildren().add(replayNextMoveButton);
+
+                try {
+                    for (int i = 0; i < allStrikethroughLines.size(); i++) {
+                        root.getChildren().remove(allStrikethroughLines.get(i));
+                    }
+
+                    for (int i = 0; i < boardSize; i++) {
+                        for (int j = 0; j < boardSize; j++) {
+                            board.getTile(i, j).clearGamePiece();
+                        }
+                    }
+
+                    root.getChildren().remove(winnerLabel);
+
+                } catch (Exception exception) {
+                    System.out.println("Exception with replay game occurred.");
+                }
+
+                if (!board.isBlueTurn)
+                    root.getChildren().remove(redTurn);
+                else
+                    root.getChildren().remove(blueTurn);
+
+            });
+
+            replayNextMoveButton.setOnAction( e -> {
+                replay.play();
+
+
+                if (!board.isBlueTurn)
+                    root.getChildren().remove(redTurn);
+                else
+                    root.getChildren().remove(blueTurn);
+            });
+
+            replayGameButton.setLayoutX(150 + ((boardSize + 1) * 50));
+            replayGameButton.setLayoutY(((boardSize + 1) * 50) - 25);
+
+            replayNextMoveButton.setLayoutX(((boardSize + 1) * 50));
+            replayNextMoveButton.setLayoutY(25 + (boardSize + 1) * 50);
+
+            root.getChildren().add(replayGameButton);
+
+        }
+    }
+
     public void changeTurn() {
         displayPlayerTurn(board.isBlueTurn);
 
         if (simpleGame.isCurrentGameMode) {
             if (simpleGame.isEndOfGame() && simpleGame.gameIsDraw) {
-                drawWinnerLabel("Draw");
+
+                if (!isReplaying) {
+                    drawWinnerLabel("Draw");
+                    isReplaying = true;
+                    replayGame();
+                }
             }
 
             else if (simpleGame.isEndOfGame() && !simpleGame.gameIsDraw) {
                 addStrikethroughToPieces(simpleGame.getWinningLocations());
-                drawWinnerLabel(simpleGame.getWinner());
+
+                if (!isReplaying) {
+                    drawWinnerLabel(simpleGame.getWinner());
+                    isReplaying = true;
+                    replayGame();
+                }
             }
         }
 
         else if (generalGame.isCurrentGameMode) {
             if (generalGame.isEndOfGame()) {
-                drawWinnerLabel(generalGame.getWinner());
+
+                if (!isReplaying) {
+                    drawWinnerLabel(generalGame.getWinner());
+                    isReplaying = true;
+                    replayGame();
+                }
+                else {
+                    generalGame.getWinner();
+                }
             }
         }
     }
@@ -466,9 +603,8 @@ public class GUI {
         newGame.setLayoutY(25 + (boardSize + 1) * 50);
 
         newGame.setOnAction( e -> {
-            //change game mode to whatever is selected
 
-            root.getChildren().removeAll(bluePlayerLabel, blueButtonS, blueButtonO, redPlayerLabel, redButtonS, redButtonO, gameName, simpleGameButton, generalGameButton, newGame);
+            root.getChildren().removeAll(bluePlayerLabel, blueButtonS, blueButtonO, redPlayerLabel, redButtonS, redButtonO, gameName, simpleGameButton, generalGameButton, newGame, replayGameButton, replayNextMoveButton);
 
             if (simpleGame.gameIsOver || generalGame.gameIsOver) {
                 root.getChildren().remove(winnerLabel);
@@ -491,9 +627,23 @@ public class GUI {
             generalGame.existingSOS = new ArrayList<ArrayList<ArrayList<Integer>>>();
 
             board.bluePlayer.resetToDefault();
+            board.bluePlayer.recordGame.deleteRecording();
+
             board.redPlayer.resetToDefault();
+            board.redPlayer.recordGame.deleteRecording();
 
+            blueComputerPlayerButton.setSelected(false);
+            blueHumanPlayerButton.setSelected(false);
 
+            redComputerPlayerButton.setSelected(false);
+            redHumanPlayerButton.setSelected(false);
+
+            recordGameCheckbox.setSelected(false);
+
+            bluePlayerSelected = false;
+            redPlayerSelected = false;
+
+            isReplaying = false;
 
             board.clearBoard();
             primaryStage.setScene(initScene);

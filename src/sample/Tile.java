@@ -7,6 +7,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.layout.StackPane;
 
+import java.util.ArrayList;
+
 public class Tile extends StackPane {
 
     private Text text;
@@ -14,7 +16,11 @@ public class Tile extends StackPane {
 
     private Board board;
 
-    public Tile(int length, int width, Board board) {
+    private int row;
+    private int column;
+    private ArrayList<Integer> cellLocation;
+
+    public Tile(int length, int width, Board board, int row, int column) {
         this.board = board;
         this.text = new Text();
         this.box = new Rectangle(length, width);
@@ -22,6 +28,10 @@ public class Tile extends StackPane {
         this.box.setStroke(Color.BLACK);
         this.text.setStyle("-fx-font-size: 40;");
         setAlignment(Pos.CENTER);
+
+        cellLocation = new ArrayList<Integer>();
+        cellLocation.add(row);
+        cellLocation.add(column);
 
         getChildren().addAll(this.box, text);
 
@@ -45,6 +55,8 @@ public class Tile extends StackPane {
             else
                 drawO();
 
+            board.bluePlayer.recordMove(cellLocation, board.bluePlayer.selectedPiece);
+
             board.changeTurn();
         }
 
@@ -54,6 +66,8 @@ public class Tile extends StackPane {
                 drawS();
             else
                 drawO();
+
+            board.redPlayer.recordMove(cellLocation, board.redPlayer.selectedPiece);
 
 
             board.changeTurn();
